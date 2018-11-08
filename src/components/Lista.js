@@ -2,8 +2,7 @@ import React from 'react';
 
 const fielsTable = ['Nombre', 'Descripción', 'Acción'];
 
-const Lista = ({ posts, deletePost }) => {
-	return (
+const Lista = ({ posts, deletePost }) =>  (
 		<table className="table mb-5 mt-2 table-striped text-center">
 			<thead className="thead-dark">
 				<tr>
@@ -12,22 +11,20 @@ const Lista = ({ posts, deletePost }) => {
 			</thead>
 			<tbody>
 				{
-					posts.map(post => {
-						return (
+					posts.map(post => (
 							<tr key={post.idposts} >
 								<td>{post.name}</td>
 								<td>{post.description}</td>
 								<td>
-									<button onClick={() => deletePost(post.idposts)} className="btn btn-danger btn-sm">Eliminar</button>
+									<button onClick={deletePost.bind(null, post.idposts)} className="btn btn-danger btn-sm">Eliminar</button>
 								</td>
 							</tr>
-						);
-					})
+						)
+					)
 				}
 			</tbody>
 		</table>
 	);
 
-}
 
 export default Lista;

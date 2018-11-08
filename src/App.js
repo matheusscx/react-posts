@@ -3,6 +3,7 @@ import Formulario from './components/Formulario';
 import Filtro from './components/Filtro';
 import Lista from './components/Lista';
 
+const URIDB = 'https://app-posts.herokuapp.com/posts'
 
 class App extends Component {
   constructor() {
@@ -10,12 +11,16 @@ class App extends Component {
     this.state = {
       posts: [],
       postsAux: [],
-      isLoaded: false
+      search: 'hola',
+      form: {
+        name: '',
+        description: ''
+      },
     }
   }
 
   componentWillMount = () => {
-    fetch('https://app-posts.herokuapp.com/posts')
+    fetch(URIDB)
       .then(res => res.json())
       .then(json => {
         this.setState({
@@ -27,11 +32,17 @@ class App extends Component {
 
   render() {
 
+    const {
+      posts,
+      search,
+      form
+    } = this.state
+
     return (
       <div className='container'>
-        <Filtro searchPost={this.searchPost}></Filtro>
-        <Lista posts={this.state.posts} deletePost={this.deletePost}></Lista>
-        <Formulario addPost={this.addPost}></Formulario>
+        <Filtro search={search} searchState={this.searchState} searchPost={this.searchPost}></Filtro>
+        <Lista posts={posts} deletePost={this.deletePost}></Lista>
+        <Formulario formState={this.formState} addPost={this.addPost} name={form.name} description={form.description}></Formulario>
       </div>
     );
   }
@@ -39,8 +50,7 @@ class App extends Component {
   deletePost = id => {
     let confirm = window.confirm('¿Estás seguro de que deseas eliminar este elemento?')
     if (confirm) {
-
-      fetch(`https://app-posts.herokuapp.com/posts/${id}`, { method: 'DELETE' })
+      fetch(`${URIDB}/${id}`, { method: 'DELETE' })
         .then(res => res.json())
         .then(data => {
           let newState = this.state.posts.filter(post => post.idposts !== id)
@@ -49,10 +59,10 @@ class App extends Component {
     }
   }
 
-  addPost = ({ name, description }) => {
+  addPost = (name, description) => {
 
     if (name.length >= 3 && description.length >= 5) {
-      fetch('https://app-posts.herokuapp.com/posts', {
+      fetch(URIDB, {
         method: 'POST',
         body: JSON.stringify({ name, description }),
         headers: { 'Content-type': "application/json" }
@@ -66,8 +76,8 @@ class App extends Component {
     }
   }
 
-  searchPost = ({ search }) => {
-    if (search.length > 0) {
+  searchPost = (search) => {
+    if (search.length) {
       this.setState({ postsAux: this.state.posts })
       let key = new RegExp(search, 'i')
       let newState = this.state.posts.filter(post => key.test(post.name))
@@ -76,6 +86,19 @@ class App extends Component {
       this.setState({ posts: this.state.postsAux })
     }
   }
+
+  formState = (input, value) => {
+    this.setState(prevState => {
+      if (value === 'name')
+        return { form: { [input]: value, description: prevState.form.description } }
+      return { form: { name: prevState.form.name, [input]: value, } }
+    })
+  }
+
+  searchState = (search) => {
+    this.setState({ search })
+  }
+
 }
 
 

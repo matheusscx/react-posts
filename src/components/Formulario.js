@@ -1,55 +1,65 @@
 import React, { Component } from 'react';
 
 class Formulario extends Component {
+	constructor(props) {
 
-		state = {
-			name: '',
-			description: ''
-		}
-	
+		super(props)
+		this.nameInput = React.createRef();
+		this.descriptionInput = React.createRef();
+
+	}
+
 	onChange = e => {
-		this.setState({ [e.target.name]: e.target.value })
+		this.props.formState(e.target.name, e.target.value);
 	}
 
 	handleSubmit = e => {
 		e.preventDefault();
-		document.getElementById('nameInput').value = '';
-		document.getElementById('descriptionInput').value = '';
-		this.setState({ name: '', description: '' })
+		this.nameInput.current.value = '';
+		this.descriptionInput.current.value = '';
 	}
 
 	render() {
+
+		const {
+			addPost,
+			name,
+			description
+		} = this.props;
+
 		return (
 			<form onSubmit={this.handleSubmit}>
 				<div className="row">
-					
+
 					<div className="col-12 col-sm-3 ">
-						<input 
+						<input
 							className='form-control'
-							id='nameInput' 
-							name='name' type='text' 
-							onChange={this.onChange.bind(this)}
-							placeholder='Nombre' 
-							required minLength='3' 
+							id='nameInput'
+							name='name' type='text'
+							onChange={this.onChange}
+							placeholder='Nombre'
+							required minLength='3'
+							ref={this.nameInput}
 						/>
 					</div>
 
 					<div className="col-12 col-sm-7 my-3 my-sm-0">
-						<input 
+						<input
 							className='form-control'
-							id='descriptionInput' 
-							name='description' type='text' 
-							onChange={this.onChange.bind(this)} 
-							placeholder='Descripción' 
-							required minLength='5' 
+							id='descriptionInput'
+							name='description' type='text'
+							onChange={this.onChange}
+							placeholder='Descripción'
+							required minLength='5'
+							ref={this.descriptionInput}
 						/>
 					</div>
 
 					<div className="col-12 col-sm-2 text-right ">
-						<button 
+						<button
 							className='btn btn-success mb-3 mr-lg-4 shadow-sm'
-							onClick={() => this.props.addPost(this.state)}
-							type='submit' 
+							onClick={addPost.bind(null, name, description)}
+							type='submit'
 						>
 							Crear
 						</button>
